@@ -75,7 +75,6 @@ abstract class NestingFields[R <: ConnectRecord[R]] extends Transformation[R] {
     val newNestedSchema = updatedSchema.field(nestedName).schema
     val newNestedValue = new Struct(newNestedSchema)
     val updatedValue = new Struct(updatedSchema)
-    updatedValue.put(nestedName, newNestedValue)
     
     for (field <- value.schema.fields) {
       updatedValue.put(field.name, value.get(field))
@@ -84,6 +83,8 @@ abstract class NestingFields[R <: ConnectRecord[R]] extends Transformation[R] {
     for (field <- value.schema.fields) {
       if (fields.contains(field.name)) newNestedValue.put(field.name, value.get(field))
     }
+
+    updatedValue.put(nestedName, newNestedValue)
     newRecord(record, updatedSchema, updatedValue)
   }
 
